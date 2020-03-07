@@ -172,6 +172,71 @@ extension AttributedStringVisitor: Visitor {
         styler.style(image: s, title: node.title, url: node.url)
         return s
     }
+    
+    public func visit(strikethrough node: Strikethrough) -> NSMutableAttributedString {
+        let s = visitChildren(of: node).joined
+        styler.style(strikethrough: s)
+        return s
+    }
+    
+    public func visit(table node: Table) -> NSMutableAttributedString {
+        
+        // guard let s = node.literal?.attributed else { return .empty }
+        // styler.style(table: s)
+        // return s
+        
+        let s = visitChildren(of: node).joined
+        styler.style(table: s)
+        return s
+        
+        // guard let literal = node.literal else { return .empty }
+        // let s = literal.replacingNewlinesWithLineSeparators().attributed
+        // if node.hasSuccessor { s.append(.paragraphSeparator) }
+        // styler.style(table: s)
+        // return s
+    }
+    
+    public func visit(tableRow node: TableRow) -> NSMutableAttributedString {
+        
+        let s = visitChildren(of: node).joined
+        // s.append(.paragraphSeparator)
+        // s.append("\(String.zeroWidthSpace)\n".attributed)
+        
+        // s.append()
+        let line = String.lineSeparator.attributed
+        styler.style(strikethrough: line)
+        s.append(line)
+        
+        styler.style(tableRow: s)
+        return s
+        
+        // guard let s = node.literal?.attributed else { return .empty }
+        // styler.style(tableRow: s)
+        // return s
+        
+        // guard let literal = node.literal else { return .empty }
+        // let s = literal.replacingNewlinesWithLineSeparators().attributed
+        // if node.hasSuccessor { s.append(.paragraphSeparator) }
+        // styler.style(tableRow: s)
+        // return s
+    }
+    
+    public func visit(tableCell node: TableCell) -> NSMutableAttributedString {
+        
+        let s = visitChildren(of: node).joined
+        styler.style(tableCell: s)
+        return s
+        
+        // guard let s = node.literal?.attributed else { return .empty }
+        // styler.style(tableCell: s)
+        // return s
+        
+        // guard let literal = node.literal else { return .empty }
+        // let s = literal.replacingNewlinesWithLineSeparators().attributed
+        // if node.hasSuccessor { s.append(.paragraphSeparator) }
+        // styler.style(tableCell: s)
+        // return s
+    }
 }
 
 // MARK: - Helper extensions

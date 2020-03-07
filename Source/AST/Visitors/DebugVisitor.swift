@@ -106,6 +106,22 @@ public class DebugVisitor: Visitor {
     public func visit(strong node: Strong) -> String {
         return reportWithChildren(node)
     }
+    
+    public func visit(strikethrough node: Strikethrough) -> String {
+        return reportWithChildren(node)
+    }
+    
+    public func visit(table node: Table) -> String {
+        return reportWithChildren(node)
+    }
+    
+    public func visit(tableRow node: TableRow) -> String {
+        return reportWithChildren(node)
+    }
+    
+    public func visit(tableCell node: TableCell) -> String {
+        return reportWithChildren(node)
+    }
 
     public func visit(link node: Link) -> String {
         return reportWithChildren(node)

@@ -176,6 +176,23 @@ open class DownStyler: Styler {
             font.strong
         }
     }
+    
+    open func style(strikethrough str: NSMutableAttributedString) {
+        str.addAttribute(for: .strikethroughColor, value: UIColor.black)
+        str.addAttribute(for: .strikethroughStyle, value: NSUnderlineStyle.single.rawValue)
+    }
+    
+    open func style(table str: NSMutableAttributedString) {
+        styleGenericCodeBlock(in: str)
+    }
+    
+    open func style(tableRow str: NSMutableAttributedString) {
+        // styleGenericCodeBlock(in: str)
+    }
+    
+    open func style(tableCell str: NSMutableAttributedString) {
+        styleGenericCodeBlock(in: str)
+    }
 
     open func style(link str: NSMutableAttributedString, title: String?, url: String?) {
         guard let url = url else { return }

@@ -146,6 +146,16 @@ public protocol Styler {
     ///
     /// - Parameter str: the strong content.
     func style(strong str: NSMutableAttributedString)
+    
+    
+    /// Styles the content of the inline strong node in the given string.
+    ///
+    /// - Parameter str: the strong content.
+    func style(strikethrough str: NSMutableAttributedString)
+    
+    func style(table str: NSMutableAttributedString)
+    func style(tableRow str: NSMutableAttributedString)
+    func style(tableCell str: NSMutableAttributedString)
 
 
     /// Styles the content of the inline link node in the given string.

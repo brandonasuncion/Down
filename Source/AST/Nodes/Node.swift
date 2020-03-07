@@ -54,7 +54,14 @@ public extension UnsafeMutablePointer where Pointee == cmark_node {
         case CMARK_NODE_STRONG:         return Strong(cmarkNode: self)
         case CMARK_NODE_LINK:           return Link(cmarkNode: self)
         case CMARK_NODE_IMAGE:          return Image(cmarkNode: self)
-        default:                        return nil
+            
+        case CMARK_NODE_STRIKETHROUGH:  return Strikethrough(cmarkNode: self)
+            
+        case CMARK_NODE_TABLE:          return Table(cmarkNode: self)
+        case CMARK_NODE_TABLE_ROW:      return TableRow(cmarkNode: self)
+        case CMARK_NODE_TABLE_CELL:     return TableCell(cmarkNode: self)
+        
+        default:                        return CodeBlock(cmarkNode: self)
         }
     }
 
