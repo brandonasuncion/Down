@@ -312,6 +312,9 @@ static cmark_node *match(cmark_syntax_extension *ext, cmark_parser *parser,
       cmark_inline_parser_in_bracket(inline_parser, true))
     return NULL;
 
+  if (parent->type == CMARK_NODE_CODE || parent->type == CMARK_NODE_CODE_BLOCK)
+    return NULL;
+
   if (c == ':')
     return url_match(parser, parent, inline_parser);
 
