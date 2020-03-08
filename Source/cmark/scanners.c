@@ -8850,8 +8850,7 @@ yy786:
 		if (yych <= '\n') goto yy783;
 		goto yy785;
 	} else {
-		if (yych <= '\r') goto yy783;
-		if (yych != '#') goto yy785;
+		if (yych != '#') goto yy783;
 	}
 	yych = *++p;
 	if (yybm[0+yych] & 128) {
@@ -8862,8 +8861,7 @@ yy786:
 		if (yych <= '\n') goto yy783;
 		goto yy785;
 	} else {
-		if (yych <= '\r') goto yy783;
-		if (yych != '#') goto yy785;
+		if (yych != '#') goto yy783;
 	}
 	yych = *++p;
 	if (yybm[0+yych] & 128) {
@@ -8874,8 +8872,7 @@ yy786:
 		if (yych <= '\n') goto yy783;
 		goto yy785;
 	} else {
-		if (yych <= '\r') goto yy783;
-		if (yych != '#') goto yy785;
+		if (yych != '#') goto yy783;
 	}
 	yych = *++p;
 	if (yybm[0+yych] & 128) {
@@ -8884,7 +8881,7 @@ yy786:
 	if (yych <= 0x08) goto yy785;
 	if (yych <= '\n') goto yy783;
 	if (yych == '\r') goto yy783;
-	goto yy785;
+	goto yy780;
 }
 
 }
