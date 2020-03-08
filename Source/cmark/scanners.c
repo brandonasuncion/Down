@@ -8799,9 +8799,9 @@ bufsize_t _scan_atx_heading_start(const unsigned char *p)
 	yych = *p;
 	if (yych == '#') goto yy779;
 	++p;
-yy778:
+yy778: // no hashmarks
 	{ return 0; }
-yy779:
+yy779: // at least 1 hashmark
 	yych = *(marker = ++p);
 	if (yybm[0+yych] & 128) {
 		goto yy780;
@@ -8811,21 +8811,20 @@ yy779:
 		if (yych <= '\n') goto yy783;
 		goto yy778;
 	} else {
-		if (yych <= '\r') goto yy783;
 		if (yych == '#') goto yy784;
-		goto yy778;
+		goto yy782;
 	}
-yy780:
+yy780: // trim extra whitespace
 	yych = *++p;
 	if (yybm[0+yych] & 128) {
 		goto yy780;
 	}
-yy782:
+yy782: // return; p = index of first non-space in heading
 	{ return (bufsize_t)(p - start); }
-yy783:
+yy783: // increment p before returning
 	++p;
 	goto yy782;
-yy784:
+yy784: // at least 2 hashmarks
 	yych = *++p;
 	if (yybm[0+yych] & 128) {
 		goto yy780;
@@ -8834,13 +8833,13 @@ yy784:
 		if (yych <= 0x08) goto yy785;
 		if (yych <= '\n') goto yy783;
 	} else {
-		if (yych <= '\r') goto yy783;
 		if (yych == '#') goto yy786;
+		goto yy782;
 	}
-yy785:
+yy785: // ignore hashmarks; return zero
 	p = marker;
 	goto yy778;
-yy786:
+yy786: // at least 3 hashmarks
 	yych = *++p;
 	if (yybm[0+yych] & 128) {
 		goto yy780;
@@ -8850,8 +8849,21 @@ yy786:
 		if (yych <= '\n') goto yy783;
 		goto yy785;
 	} else {
-		if (yych != '#') goto yy783;
+		if (yych != '#') goto yy782;
 	}
+	yych = *++p;
+	if (yybm[0+yych] & 128) {
+		goto yy780;
+	}
+	// at least 4 hashmarks
+	if (yych <= '\f') {
+		if (yych <= 0x08) goto yy785;
+		if (yych <= '\n') goto yy783;
+		goto yy785;
+	} else {
+		if (yych != '#') goto yy782;
+	}
+	// at least 5 hashmarks
 	yych = *++p;
 	if (yybm[0+yych] & 128) {
 		goto yy780;
@@ -8861,19 +8873,9 @@ yy786:
 		if (yych <= '\n') goto yy783;
 		goto yy785;
 	} else {
-		if (yych != '#') goto yy783;
+		if (yych != '#') goto yy782;
 	}
-	yych = *++p;
-	if (yybm[0+yych] & 128) {
-		goto yy780;
-	}
-	if (yych <= '\f') {
-		if (yych <= 0x08) goto yy785;
-		if (yych <= '\n') goto yy783;
-		goto yy785;
-	} else {
-		if (yych != '#') goto yy783;
-	}
+	// at least 6 hashmarks
 	yych = *++p;
 	if (yybm[0+yych] & 128) {
 		goto yy780;
@@ -8881,7 +8883,7 @@ yy786:
 	if (yych <= 0x08) goto yy785;
 	if (yych <= '\n') goto yy783;
 	if (yych == '\r') goto yy783;
-	goto yy780;
+	return 6;
 }
 
 }
