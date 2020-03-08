@@ -257,16 +257,22 @@ static cmark_node *reddit_match(cmark_parser *parser, cmark_node *parent,
   size_t size = chunk->len - max_rewind;
   int start = cmark_inline_parser_get_column(inline_parser);
 
+  int rewind = 0;
   size_t name_end;
 
-  if (max_rewind > 0 && !cmark_isspace(data[-1]) && data[-1] != '/')
-    return 0;
+  if (max_rewind > 0) {
+    if (data[-1] == '/')
+      rewind = 1;
+    else if (!cmark_isspace(data[-1]))
+      return 0;
+  }
 
   if (size < 3 || data[1] != '/')
     return 0;
 
   name_end = 2;
-  while (name_end < size && (data[name_end] == '/' || data[name_end] == '_' || cmark_isalnum(data[name_end])))
+  while (name_end < size && (data[name_end] == '/' || data[name_end] == '_'
+    || data[name_end] == '?' || data[name_end] == '#' || cmark_isalnum(data[name_end])))
     name_end++;
 
   // Minimum length = 3
@@ -274,18 +280,19 @@ static cmark_node *reddit_match(cmark_parser *parser, cmark_node *parent,
     return NULL;
 
   cmark_inline_parser_set_offset(inline_parser, (int)(max_rewind + name_end));
+  cmark_node_unput(parent, rewind);
 
   cmark_node *node = cmark_node_new_with_mem(CMARK_NODE_LINK, parser->mem);
 
   cmark_strbuf buf;
-  cmark_strbuf_init(parser->mem, &buf, 10);
-  cmark_strbuf_puts(&buf, "http://www.reddit.com/");
+  cmark_strbuf_init(parser->mem, &buf, 24);
+  cmark_strbuf_puts(&buf, "https://www.reddit.com/");
   cmark_strbuf_put(&buf, data, (bufsize_t)name_end);
   node->as.link.url = cmark_chunk_buf_detach(&buf);
 
   cmark_node *text = cmark_node_new_with_mem(CMARK_NODE_TEXT, parser->mem);
   text->as.literal =
-      cmark_chunk_dup(chunk, (bufsize_t)max_rewind, (bufsize_t)name_end);
+      cmark_chunk_dup(chunk, max_rewind - rewind, (bufsize_t)(name_end + rewind));
   cmark_node_append_child(node, text);
 
   node->start_line = text->start_line =
