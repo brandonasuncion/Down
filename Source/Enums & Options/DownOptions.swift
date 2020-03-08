@@ -14,7 +14,7 @@ public struct DownOptions: OptionSet {
     public init(rawValue: Int32) { self.rawValue = rawValue }
 
     /// Default options
-    public static let `default` = DownOptions(rawValue: CMARK_OPT_DEFAULT)
+    public static let `default` = DownOptions(rawValue: CMARK_OPT_DEFAULT + CMARK_OPT_STRIKETHROUGH_DOUBLE_TILDE)
 
     // MARK: - Rendering Options
 

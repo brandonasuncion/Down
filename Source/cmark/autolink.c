@@ -249,6 +249,55 @@ static cmark_node *url_match(cmark_parser *parser, cmark_node *parent,
   return node;
 }
 
+static cmark_node *reddit_match(cmark_parser *parser, cmark_node *parent,
+                             cmark_inline_parser *inline_parser) {
+  cmark_chunk *chunk = cmark_inline_parser_get_chunk(inline_parser);
+  size_t max_rewind = cmark_inline_parser_get_offset(inline_parser);
+  uint8_t *data = chunk->data + max_rewind;
+  size_t size = chunk->len - max_rewind;
+  int start = cmark_inline_parser_get_column(inline_parser);
+
+  size_t name_end;
+
+  if (max_rewind > 0 && !cmark_isspace(data[-1]) && data[-1] != '/')
+    return 0;
+
+  if (size < 3 || data[1] != '/')
+    return 0;
+
+  name_end = 2;
+  while (name_end < size && (data[name_end] == '/' || data[name_end] == '_' || cmark_isalnum(data[name_end])))
+    name_end++;
+
+  // Minimum length = 3
+  if (name_end < 5)
+    return NULL;
+
+  cmark_inline_parser_set_offset(inline_parser, (int)(max_rewind + name_end));
+
+  cmark_node *node = cmark_node_new_with_mem(CMARK_NODE_LINK, parser->mem);
+
+  cmark_strbuf buf;
+  cmark_strbuf_init(parser->mem, &buf, 10);
+  cmark_strbuf_puts(&buf, "http://www.reddit.com/");
+  cmark_strbuf_put(&buf, data, (bufsize_t)name_end);
+  node->as.link.url = cmark_chunk_buf_detach(&buf);
+
+  cmark_node *text = cmark_node_new_with_mem(CMARK_NODE_TEXT, parser->mem);
+  text->as.literal =
+      cmark_chunk_dup(chunk, (bufsize_t)max_rewind, (bufsize_t)name_end);
+  cmark_node_append_child(node, text);
+
+  node->start_line = text->start_line =
+    node->end_line = text->end_line =
+    cmark_inline_parser_get_line(inline_parser);
+
+  node->start_column = text->start_column = start - 1;
+  node->end_column = text->end_column = cmark_inline_parser_get_column(inline_parser) - 1;
+
+  return node;
+}
+
 static cmark_node *match(cmark_syntax_extension *ext, cmark_parser *parser,
                          cmark_node *parent, unsigned char c,
                          cmark_inline_parser *inline_parser) {
@@ -261,6 +310,12 @@ static cmark_node *match(cmark_syntax_extension *ext, cmark_parser *parser,
 
   if (c == 'w')
     return www_match(parser, parent, inline_parser);
+
+  if (c == 'r')
+    return reddit_match(parser, parent, inline_parser);
+
+  if (c == 'u')
+    return reddit_match(parser, parent, inline_parser);
 
   return NULL;
 
@@ -419,6 +474,8 @@ cmark_syntax_extension *create_autolink_extension(void) {
   cmark_mem *mem = cmark_get_default_mem_allocator();
   special_chars = cmark_llist_append(mem, special_chars, (void *)':');
   special_chars = cmark_llist_append(mem, special_chars, (void *)'w');
+  special_chars = cmark_llist_append(mem, special_chars, (void *)'r');
+  special_chars = cmark_llist_append(mem, special_chars, (void *)'u');
   cmark_syntax_extension_set_special_inline_chars(ext, special_chars);
 
   return ext;
