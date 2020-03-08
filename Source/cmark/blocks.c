@@ -539,7 +539,7 @@ static bufsize_t parse_list_marker(cmark_mem *mem, cmark_chunk *input,
   startpos = pos;
   c = peek_at(input, pos);
 
-  if (c == '*' || c == '-' || c == '+') {
+  if (c == '*' || c == '-') {
     pos++;
     if (!cmark_isspace(peek_at(input, pos))) {
       return 0;
