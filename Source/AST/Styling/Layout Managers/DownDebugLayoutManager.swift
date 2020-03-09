@@ -31,9 +31,9 @@ import AppKit
 /// of a `DownStyler`.
 ///
 /// Insert this into a TextKit stack manually, or use the provided `DownDebugTextView`.
-public class DownDebugLayoutManager: DownLayoutManager {
+open class DownDebugLayoutManager: DownLayoutManager {
 
-    override public func drawGlyphs(forGlyphRange glyphsToShow: NSRange, at origin: CGPoint) {
+    override open func drawGlyphs(forGlyphRange glyphsToShow: NSRange, at origin: CGPoint) {
         super.drawGlyphs(forGlyphRange: glyphsToShow, at: origin)
         drawLineFragments(forGlyphRange: glyphsToShow, at: origin)
     }
